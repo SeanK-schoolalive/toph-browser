@@ -1,0 +1,106 @@
+name: Build Toph Browser Android
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "VERSION.lock"
+      - "patches/**"
+      - "config/**"
+      - "scripts/**"
+      - "build/**"
+      - ".github/workflows/build-android.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: toph-android-build
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Android ${{ matrix.arch }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 360
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: armv7
+            target: torbrowser-android-armv7
+          - arch: arm64
+            target: torbrowser-android-aarch64
+          - arch: x86_64
+            target: torbrowser-android-x86_64
+
+    steps:
+      - name: Check out Toph Browser
+        uses: actions/checkout@v4
+
+      - name: Free runner disk space
+        shell: bash
+        run: |
+          set -euxo pipefail
+          sudo rm -rf /usr/local/lib/android/sdk/ndk/* || true
+          sudo rm -rf /usr/local/share/powershell /usr/share/dotnet || true
+          df -h
+
+      - name: Install Tor Browser build dependencies
+        shell: bash
+        run: |
+          set -euxo pipefail
+          sudo apt-get update
+          sudo apt-get install -y build-essential git git-lfs make perl python3 python3-dev python3-pip python3-venv rsync unzip zip zstd jq curl ca-certificates patch pkg-config libyaml-libyaml-perl libtemplate-perl libxml-libxml-perl libxml-writer-perl libwww-perl libjson-perl libdatetime-perl libfile-copy-recursive-perl libfile-slurp-perl libfile-temp-perl libpath-tiny-perl libstring-shellquote-perl libsort-versions-perl libdata-uuid-perl libdata-dump-perl libdigest-sha-perl libio-all-perl libparallel-forkmanager-perl
+
+      - name: Configure Linux user namespaces
+        shell: bash
+        run: |
+          set -euxo pipefail
+          sudo sysctl -w kernel.unprivileged_userns_clone=1 || true
+          sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0 || true
+
+      - name: Check locked Toph revisions
+        shell: bash
+        run: |
+          set -euxo pipefail
+          grep -q '^release=15.0.24$' VERSION.lock
+          grep -q '^firefox_esr=140.17.0esr$' VERSION.lock
+          grep -q '^android_geckoview=140.17.0esr$' VERSION.lock
+          grep -q '^release=0.4.9.13$' VERSION.lock
+          grep -q '^minimum_api=23$' VERSION.lock
+          grep -q '^target_api=23$' VERSION.lock
+
+      - name: Clone locked Tor Browser build system
+        shell: bash
+        run: |
+          set -euxo pipefail
+          git clone https://gitlab.torproject.org/tpo/applications/tor-browser-build.git tor-browser-build
+          git -C tor-browser-build checkout --detach 166b1f8f
+          git -C tor-browser-build submodule update --init --recursive
+          git -C tor-browser-build rev-parse HEAD
+
+      - name: Build unsigned Android APK
+        working-directory: tor-browser-build
+        shell: bash
+        run: |
+          set -euxo pipefail
+          ./rbm/rbm build release --target no_containers --target testbuild --target "${{ matrix.target }}"
+
+      - name: Collect APKs
+        shell: bash
+        run: |
+          set -euxo pipefail
+          mkdir -p artifacts
+          find tor-browser-build -type f \( -name "*.apk" -o -name "*.aab" \) -print -exec cp -v {} "artifacts/" \;
+          test -n "$(find artifacts -type f | head -n1)"
+          sha256sum artifacts/*
+
+      - name: Upload Android build
+        uses: actions/upload-artifact@v4
+        with:
+          name: toph-browser-android-${{ matrix.arch }}
+          path: artifacts/
+          if-no-files-found: error
+          retention-days: 14
