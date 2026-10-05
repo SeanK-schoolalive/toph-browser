@@ -1,0 +1,53 @@
+name: Verify Toph Browser
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  repository:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify required project files
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f README.md
+          test -f VERSION.lock
+          test -f UPSTREAM-BASELINE.md
+          test -x scripts/bootstrap-upstream.sh
+          test -x scripts/fetch-firefox-source.sh
+          test -x scripts/record-versions.sh
+          test -x scripts/verify-lock.sh
+          test -x scripts/check-android-api.sh
+          test -x scripts/audit-network.sh
+
+      - name: Check shell syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash -n scripts/*.sh
+
+      - name: Check lock-file structure
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -q '^release=15.0.24$' VERSION.lock
+          grep -q '^firefox_esr=140.17.0esr$' VERSION.lock
+          grep -q '^android_geckoview=140.17.0esr$' VERSION.lock
+          grep -q '^release=0.4.9.13$' VERSION.lock
+          grep -q '^minimum_api=23$' VERSION.lock
+          grep -q '^target_api=23$' VERSION.lock
+
+      - name: Check upstream references
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -q 'github.com/mozilla-firefox/firefox' README.md
+          grep -q 'gitlab.torproject.org/tpo/core/tor' README.md
+          grep -q 'gitlab.torproject.org/tpo/applications/tor-browser' README.md
