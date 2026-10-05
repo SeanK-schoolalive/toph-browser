@@ -12,16 +12,16 @@ help:
 	  '  make api       - print Android API/ABI information from a connected device'
 
 verify:
-	./scripts/verify-lock.sh
+	bash scripts/verify-lock.sh
 
 bootstrap:
-	./scripts/bootstrap-upstream.sh
+	bash scripts/bootstrap-upstream.sh
 
 versions:
-	./scripts/record-versions.sh
+	bash scripts/record-versions.sh
 
 audit:
-	./scripts/audit-network.sh
+	bash scripts/audit-network.sh
 
 api:
-	./scripts/check-android-api.sh
+	bash scripts/check-android-api.sh
