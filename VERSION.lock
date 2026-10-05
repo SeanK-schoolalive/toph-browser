@@ -1,18 +1,33 @@
 # Toph Browser upstream revision lock
 #
-# IMPORTANT: These are placeholders until exact, verified upstream release
-# revisions are selected. Do not invent hashes.
+# Baseline selected: Tor Browser 15.0.24 (Android), released 2026-09-29.
+# This is the last Tor Browser major series that supports Android 5/6/7.
 #
-# firefox=
-# tor=
-# tor-browser=
-#
-# Record the exact tag and git commit SHA here before applying patches.
+# Verified from Tor Project release/build metadata. See README for sources.
+
+[tor-browser]
+release=15.0.24
+browser_series=15.0
+firefox_esr=140.17.0esr
+tor_browser_commit=8cae94965791def3a7e63a1acb9e998ce8133de9
+base_browser_commit=c62d7c244409d6d6ca37cd7f4819260ffc3cf60b
+fenix_commit=61d9e9dc2c94ca0e071ce3be0b018c5a5958101f
+android_geckoview=140.17.0esr
+
+[tor]
+release=0.4.9.13
+tag=tor-0.4.9.13
+
+[firefox]
+upstream_release=140.17.0esr
+note=Toph uses the Tor Browser base-browser/Tor Browser source revisions above rather than inventing a Mozilla-central SHA. The exact Mozilla source relationship is resolved by the Tor Browser build metadata.
 
 [android]
 minimum_api=23
 target_api=23
-abi=to-be-determined
+supported_baseline=Android 5.0+ upstream baseline; Toph specifically targets Android 6 / API 23
+abis=armv7,arm64,x86,x86_64
 
-[build]
-notes=Android 6 compatibility must be validated against the selected upstream revision.
+[validation]
+status=upstream-baseline-selected
+toph_android6_build=not-yet-validated
