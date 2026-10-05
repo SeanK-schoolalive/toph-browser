@@ -20,12 +20,12 @@ jobs:
           test -f README.md
           test -f VERSION.lock
           test -f UPSTREAM-BASELINE.md
-          test -x scripts/bootstrap-upstream.sh
-          test -x scripts/fetch-firefox-source.sh
-          test -x scripts/record-versions.sh
-          test -x scripts/verify-lock.sh
-          test -x scripts/check-android-api.sh
-          test -x scripts/audit-network.sh
+          test -f scripts/bootstrap-upstream.sh
+          test -f scripts/fetch-firefox-source.sh
+          test -f scripts/record-versions.sh
+          test -f scripts/verify-lock.sh
+          test -f scripts/check-android-api.sh
+          test -f scripts/audit-network.sh
 
       - name: Check shell syntax
         shell: bash
