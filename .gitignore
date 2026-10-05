@@ -1,0 +1,23 @@
+# Mozilla/Firefox build output
+obj-*/
+dist/
+artifacts/
+build/
+*.apk
+*.aab
+*.aar
+
+# Local tool state
+.mozbuild/
+machrc
+*.log
+
+# OS/editor files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Local secrets
+.env
+.env.*
