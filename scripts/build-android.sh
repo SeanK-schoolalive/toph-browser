@@ -51,7 +51,7 @@ if [[ -n "${MOZCONFIG:-}" ]]; then
   echo "Using MOZCONFIG=$MOZCONFIG"
 fi
 
-./mach bootstrap --application-choice="GeckoView/Firefox for Android"
+./mach --no-interactive bootstrap --application-choice="GeckoView/Firefox for Android"
 ./mach build
 ./mach package
 
