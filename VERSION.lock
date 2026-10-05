@@ -1,0 +1,18 @@
+# Toph Browser upstream revision lock
+#
+# IMPORTANT: These are placeholders until exact, verified upstream release
+# revisions are selected. Do not invent hashes.
+#
+# firefox=
+# tor=
+# tor-browser=
+#
+# Record the exact tag and git commit SHA here before applying patches.
+
+[android]
+minimum_api=23
+target_api=23
+abi=to-be-determined
+
+[build]
+notes=Android 6 compatibility must be validated against the selected upstream revision.
