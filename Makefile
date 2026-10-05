@@ -1,6 +1,6 @@
 SHELL := /usr/bin/env bash
 
-.PHONY: help verify bootstrap versions audit api
+.PHONY: help verify bootstrap versions audit api build
 
 help:
 	@printf '%s\n' \
@@ -9,7 +9,8 @@ help:
 	  '  make bootstrap - fetch locked Tor Browser and Tor sources' \
 	  '  make versions  - print checked-out upstream revisions' \
 	  '  make audit     - run the network-audit checklist' \
-	  '  make api       - print Android API/ABI information from a connected device'
+	  '  make api       - print Android API/ABI information from a connected device' \
+	  '  make build     - build the locked Tor Browser Android baseline'
 
 verify:
 	bash scripts/verify-lock.sh
@@ -25,3 +26,6 @@ audit:
 
 api:
 	bash scripts/check-android-api.sh
+
+build:
+	bash scripts/build-android.sh
