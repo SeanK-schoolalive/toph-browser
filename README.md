@@ -1,5 +1,5 @@
 # Toph Browser
-
+![logo](Duck-ai-image-2026-10-05-21-53_edited.jpg)
 **TOPH = The Onion Phox**
 
 Toph Browser is a privacy-focused Firefox-derived Android browser project targeting **Android 6 (API 23)**.
