@@ -1,0 +1,9 @@
+--- a/mobile/android/app/src/main/res/values/preferences.xml
++++ b/mobile/android/app/src/main/res/values/preferences.xml
+@@ -1,6 +1,6 @@
+ <?xml version="1.0" encoding="utf-8"?>
+ <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+-    <CheckBoxPreference android:key="telemetry" android:defaultValue="true" />
++    <CheckBoxPreference android:key="telemetry" android:defaultValue="false" />
+     <CheckBoxPreference android:key="crash_reporter" android:defaultValue="false" />
+     <CheckBoxPreference android:key="datareporting" android:defaultValue="false" />
