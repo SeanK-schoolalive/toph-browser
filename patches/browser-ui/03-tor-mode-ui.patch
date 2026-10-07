@@ -1,0 +1,24 @@
+--- a/mobile/android/app/src/main/res/menu/tor_mode_menu.xml
++++ b/mobile/android/app/src/main/res/menu/tor_mode_menu.xml
+@@ -0,0 +1,20 @@
++<?xml version="1.0" encoding="utf-8"?>
++<menu xmlns:android="http://schemas.android.com/apk/res/android"
++    xmlns:app="http://schemas.android.com/apk/res-auto">
++    
++    <item
++        android:id="@+id/action_tor_official"
++        android:title="@string/toph_tor_official"
++        android:icon="@drawable/ic_tor_official"
++        app:showAsAction="never" />
++    
++    <item
++        android:id="@+id/action_tor_custom"
++        android:title="@string/toph_tor_custom"
++        android:icon="@drawable/ic_tor_custom"
++        app:showAsAction="never" />
++    
++    <item
++        android:id="@+id/action_tor_settings"
++        android:title="Tor Settings"
++        app:showAsAction="never" />
++</menu>
