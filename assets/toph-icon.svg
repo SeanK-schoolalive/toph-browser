@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" role="img" aria-label="Toph app icon">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0d1836"/>
+      <stop offset="100%" stop-color="#0a122b"/>
+    </linearGradient>
+    <linearGradient id="purple" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#5f3b9f"/>
+      <stop offset="100%" stop-color="#4b2d87"/>
+    </linearGradient>
+    <linearGradient id="orange" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ffb049"/>
+      <stop offset="100%" stop-color="#f08a00"/>
+    </linearGradient>
+  </defs>
+
+  <rect x="48" y="48" width="928" height="928" rx="200" fill="url(#bg)"/>
+
+  <g opacity="0.98">
+    <circle cx="512" cy="512" r="340" fill="none" stroke="url(#purple)" stroke-width="90"/>
+    <path d="M252 660 L392 432 L512 540 L632 432 L772 660" fill="none" stroke="url(#purple)" stroke-width="82" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M312 714 L461 515 L512 572 L563 515 L712 714" fill="none" stroke="url(#purple)" stroke-width="82" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M220 450 L512 166 L804 450" fill="none" stroke="url(#purple)" stroke-width="84" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+
+  <g>
+    <path d="M386 722 Q512 636 638 722 L585 857 Q542 895 512 895 Q482 895 439 857 Z" fill="url(#orange)"/>
+
+    <path d="M344 680 L438 455 L512 550 L586 455 L680 680 L512 740 Z" fill="url(#orange)"/>
+
+    <path d="M438 450 L344 670 L512 594 L680 670 L586 450 Z" fill="none" stroke="#151d3f" stroke-width="26" stroke-linejoin="round"/>
+
+    <path d="M352 390 L438 370 L512 492 L586 370 L672 390 L624 476 L512 560 L400 476 Z" fill="url(#purple)" opacity="0.92"/>
+
+    <path d="M433 663 L512 620 L591 663" fill="none" stroke="#11192f" stroke-width="24" stroke-linecap="round"/>
+
+    <path d="M318 560 Q510 395 704 560" fill="none" stroke="#11192f" stroke-width="30" stroke-linecap="round" opacity="0.64"/>
+
+    <path d="M248 308 C288 236, 370 180, 512 180 C654 180, 736 236, 776 308" fill="none" stroke="url(#purple)" stroke-width="46" stroke-linecap="round"/>
+
+    <path d="M256 308 C324 238, 404 197, 512 197 C620 197, 700 238, 768 308" fill="none" stroke="#081227" stroke-width="12" stroke-linecap="round" opacity="0.7"/>
+
+    <path d="M458 490 L410 446 L382 454 L428 522 Z" fill="#ffffff"/>
+    <path d="M566 490 L614 446 L642 454 L596 522 Z" fill="#ffffff"/>
+
+    <path d="M420 466 L447 480 L459 510 L437 525 L408 512 Z" fill="#ffffff"/>
+    <path d="M604 466 L577 480 L565 510 L587 525 L616 512 Z" fill="#ffffff"/>
+
+    <path d="M472 538 L512 570 L552 538" fill="none" stroke="#11192f" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+</svg>
