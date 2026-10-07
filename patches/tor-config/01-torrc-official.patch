@@ -1,0 +1,32 @@
+--- a/mobile/android/app/src/main/assets/tor/torrc
++++ b/mobile/android/app/src/main/assets/tor/torrc
+@@ -1,10 +1,28 @@
++# Toph Browser - Official Tor Network Configuration
++# This configuration connects to the public Tor network.
++
++# Tor data directory
+ DataDirectory /data/data/org.torproject.torbrowser/tor
++
++# Tor control port for browser communication
+ ControlPort 9051
++ControlSocket /data/data/org.torproject.torbrowser/control.socket
++
++# Socks proxy for browser connections
+ SocksPort 9050
++SocksListenAddress 127.0.0.1
++
++# Logging
+ Log notice stderr
++
++# Performance settings for mobile
+ ClientTransportPlugin obfs4,meek exec /system/bin/obfs4proxy
++
++# Security settings
+ ExitPolicy reject *:*
++DisableAllSwap 1
++NoExec 1
++
++# Connection settings for Android
+ ClientOnly 1
+ AvoidDiskWrites 1
+ UseEntryGuards 1
