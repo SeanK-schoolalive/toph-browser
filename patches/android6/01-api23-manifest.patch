@@ -1,0 +1,10 @@
+--- a/mobile/android/app/src/main/AndroidManifest.xml
++++ b/mobile/android/app/src/main/AndroidManifest.xml
+@@ -5,7 +5,7 @@
+     package="org.torproject.torbrowser"
+     android:versionCode="1"
+     android:versionName="1.0"
+-    android:targetSdkVersion="31"
++    android:targetSdkVersion="23"
+-    android:minSdkVersion="21">
++    android:minSdkVersion="23">
