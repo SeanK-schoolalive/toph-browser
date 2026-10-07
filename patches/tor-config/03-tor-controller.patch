@@ -1,0 +1,41 @@
+--- a/mobile/android/app/src/main/java/org/torproject/torbrowser/TorController.java
++++ b/mobile/android/app/src/main/java/org/torproject/torbrowser/TorController.java
+@@ -1,6 +1,40 @@
+ package org.torproject.torbrowser;
+ 
++import android.content.Context;
++import android.content.SharedPreferences;
++
+ public class TorController {
++    public static final String TOR_MODE_OFFICIAL = "official";
++    public static final String TOR_MODE_CUSTOM = "custom";
++    public static final String TOR_MODE_DISABLED = "disabled";
++    
++    private Context mContext;
++    private SharedPreferences mPrefs;
++    private String mCurrentMode = TOR_MODE_OFFICIAL;
++    
++    public TorController(Context context) {
++        this.mContext = context;
++        this.mPrefs = context.getSharedPreferences("tor_config", Context.MODE_PRIVATE);
++        this.mCurrentMode = mPrefs.getString("tor_mode", TOR_MODE_OFFICIAL);
++    }
++    
++    public String getCurrentMode() {
++        return mCurrentMode;
++    }
++    
++    public void setMode(String mode) {
++        if (!isValidMode(mode)) {
++            throw new IllegalArgumentException("Invalid Tor mode: " + mode);
++        }
++        mCurrentMode = mode;
++        mPrefs.edit().putString("tor_mode", mode).apply();
++    }
++    
++    private boolean isValidMode(String mode) {
++        return TOR_MODE_OFFICIAL.equals(mode) || 
++               TOR_MODE_CUSTOM.equals(mode) || 
++               TOR_MODE_DISABLED.equals(mode);
++    }
+ }
