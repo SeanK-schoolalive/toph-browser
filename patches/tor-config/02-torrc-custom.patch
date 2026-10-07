@@ -1,0 +1,38 @@
+--- /dev/null
++++ b/mobile/android/app/src/main/assets/tor/torrc-custom
+@@ -0,0 +1,35 @@
++# Toph Browser - Custom Tor Network Configuration
++# This configuration connects to a custom/private Tor network.
++# WARNING: Only use this if you control the Tor authorities and relays.
++
++# Tor data directory
++DataDirectory /data/data/org.torproject.torbrowser/tor-custom
++
++# Tor control port for browser communication
++ControlPort 9051
++ControlSocket /data/data/org.torproject.torbrowser/control.socket
++
++# Socks proxy for browser connections
++SocksPort 9050
++SocksListenAddress 127.0.0.1
++
++# Logging
++Log notice stderr
++
++# Performance settings for mobile
++ClientTransportPlugin obfs4,meek exec /system/bin/obfs4proxy
++
++# Security settings
++ExitPolicy reject *:*
++DisableAllSwap 1
++NoExec 1
++
++# Connection settings for Android
++ClientOnly 1
++AvoidDiskWrites 1
++UseEntryGuards 1
++
++# Custom directory authorities - CONFIGURE THESE FOR YOUR PRIVATE NETWORK
++# Example (replace with your actual authorities):
++# DirAuthority auth1 orport=9001 10.0.0.1:9030 AAAA...
++# DirAuthority auth2 orport=9001 10.0.0.2:9030 BBBB...
