@@ -1,0 +1,8 @@
+--- a/mobile/android/app/src/main/res/values/preferences.xml
++++ b/mobile/android/app/src/main/res/values/preferences.xml
+@@ -1,6 +1,7 @@
+ <?xml version="1.0" encoding="utf-8"?>
+ <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+     <CheckBoxPreference android:key="app_update_auto" android:defaultValue="false" />
++    <CheckBoxPreference android:key="update_notifications" android:defaultValue="false" />
+     <CheckBoxPreference android:key="app_update_notifications" android:defaultValue="false" />
