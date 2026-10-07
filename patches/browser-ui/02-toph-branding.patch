@@ -1,0 +1,19 @@
+--- a/mobile/android/app/src/main/res/values/strings.xml
++++ b/mobile/android/app/src/main/res/values/strings.xml
+@@ -245,6 +245,20 @@
+     <string name="mozac_feature_prompts_infobar_cancel">Cancel</string>
+ 
++    <!-- Toph Browser specific strings -->
++    <string name="toph_app_name">Toph Browser</string>
++    <string name="toph_tagline">Privacy-focused. Tor-integrated.</string>
++    <string name="toph_about_description">Toph Browser is a privacy-focused Firefox-based Android browser with integrated Tor support. Built for Android 6 and designed to keep your browsing private.</string>
++    
++    <!-- Tor network modes -->
++    <string name="toph_tor_official">Official Tor Network</string>
++    <string name="toph_tor_custom">Custom Tor Network</string>
++    <string name="toph_tor_official_desc">Connect through the public Tor network</string>
++    <string name="toph_tor_custom_desc">Connect through a custom/private Tor network</string>
++    <string name="toph_tor_disabled">Tor Disabled</string>
++    <string name="toph_tor_disabled_desc">Browse without Tor</string>
++
+ </resources>
