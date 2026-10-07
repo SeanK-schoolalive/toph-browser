@@ -1,0 +1,14 @@
+--- a/mobile/android/app/build.gradle
++++ b/mobile/android/app/build.gradle
+@@ -18,8 +18,8 @@
+     compileSdkVersion 23
+     buildToolsVersion "23.0.3"
+ 
+     defaultConfig {
+-        targetSdkVersion 31
++        targetSdkVersion 23
+-        minSdkVersion 21
++        minSdkVersion 23
+         versionCode 1
+         versionName "1.0"
+     }
