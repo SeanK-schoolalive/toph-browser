@@ -86,7 +86,7 @@ jobs:
         shell: bash
         run: |
           set -euxo pipefail
-          ./rbm/rbm build release --target no_containers --target testbuild --target "${{ matrix.target }}"
+          ./rbm/rbm build release --target no_containers --target no_containers --target "${{ matrix.target }}"
 
       - name: Collect APKs
         shell: bash
