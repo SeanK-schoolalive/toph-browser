@@ -47,6 +47,25 @@ jobs:
           sudo rm -rf /usr/local/share/powershell /usr/share/dotnet || true
           df -h
 
+      - name: Cache Gradle and Maven dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle
+            ~/.m2
+            ~/.android
+          key: ${{ runner.os }}-gradle-maven-${{ hashFiles('**/gradle.properties', '**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-maven-
+
+      - name: Cache RBM build state
+        uses: actions/cache@v4
+        with:
+          path: tor-browser-build
+          key: ${{ runner.os }}-rbm-${{ matrix.arch }}-${{ hashFiles('VERSION.lock', 'patches/**') }}
+          restore-keys: |
+            ${{ runner.os }}-rbm-${{ matrix.arch }}-
+
       - name: Install Tor Browser build dependencies
         shell: bash
         run: |
@@ -93,7 +112,13 @@ jobs:
             curl \
             ca-certificates \
             patch \
-            pkg-config
+            pkg-config \
+            openjdk-17-jdk-headless \
+            gradle \
+            gcc-multilib \
+            g++-multilib \
+            lib32z1 \
+            lib32stdc++6
 
       - name: Configure Linux user namespaces
         shell: bash
@@ -117,17 +142,39 @@ jobs:
         shell: bash
         run: |
           set -euxo pipefail
-          git clone https://gitlab.torproject.org/tpo/applications/tor-browser-build.git tor-browser-build
+          if [ ! -d tor-browser-build/.git ]; then
+            git clone https://gitlab.torproject.org/tpo/applications/tor-browser-build.git tor-browser-build
+          else
+            echo "tor-browser-build already exists, updating..."
+            cd tor-browser-build
+            git fetch origin
+          fi
           git -C tor-browser-build checkout --detach 166b1f8f
           git -C tor-browser-build submodule update --init --recursive
           git -C tor-browser-build rev-parse HEAD
+
+      - name: Clean stale RBM build state
+        shell: bash
+        run: |
+          set -euxo pipefail
+          rm -rf tor-browser-build/tmp tor-browser-build/logs || true
+          find tor-browser-build -type d -name '.gradle' -prune -exec rm -rf {} + || true
+          echo "RBM state cleaned for ${{ matrix.arch }}"
 
       - name: Build unsigned Android APK
         working-directory: tor-browser-build
         shell: bash
         run: |
           set -euxo pipefail
-          ./rbm/rbm build release --target no_containers --target "${{ matrix.target }}"
+          ./rbm/rbm build release --target no_containers --target "${{ matrix.target }}" || {
+            echo "=== RBM build failed for ${{ matrix.target }} ===" >&2
+            echo "Checking for build logs..." >&2
+            find logs -type f -name '*.log' 2>/dev/null | head -20 | while read logfile; do
+              echo "--- $logfile ---" >&2
+              tail -200 "$logfile" >&2 || true
+            done
+            exit 1
+          }
 
       - name: Collect APKs
         shell: bash
