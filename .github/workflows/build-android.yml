@@ -166,7 +166,7 @@ jobs:
         shell: bash
         run: |
           set -euxo pipefail
-          ./rbm/rbm build release --target no_containers --target "${{ matrix.target }}" || {
+          ./rbm/rbm build release --target "${{ matrix.target }}" || {
             echo "=== RBM build failed for ${{ matrix.target }} ===" >&2
             echo "Checking for build logs..." >&2
             find logs -type f -name '*.log' 2>/dev/null | head -20 | while read logfile; do
