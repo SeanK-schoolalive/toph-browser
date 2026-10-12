@@ -28,4 +28,5 @@ jobs:
       run:
         working-directory: scripts
     steps:
+      - run: ls
       - run: ./build-with-patches.sh
