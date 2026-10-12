@@ -7,25 +7,52 @@
 
 set -euo pipefail
 
-ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/..") && pwd)"
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 TB="$ROOT/upstream/tor-browser"
 LOCK="$ROOT/VERSION.lock"
+
+# Default remote for Tor Browser source. Can be overridden by setting TOR_BROWSER_GIT in the environment.
+: "${TOR_BROWSER_GIT:=https://git.torproject.org/tor-browser.git}"
 
 echo "========================================"
 echo "Toph Browser Complete Build Workflow"
 echo "========================================"
 echo
 
-# Step 1: Bootstrap
-echo "[1/5] Bootstrapping upstream Tor Browser..."
-if [[ ! -d "$TB/.git" ]]; then
-  echo "ERROR: Tor Browser not bootstrapped."
-  echo "Run: make bootstrap"
-  exit 1
+# Read locked commit early so we can checkout it after cloning if needed
+if [[ -f "$LOCK" ]]; then
+  commit=$(awk -F= '/^tor_browser_commit=/{print $2}' "$LOCK" || true)
+else
+  commit=""
 fi
 
-commit=$(awk -F= '/^tor_browser_commit=/{print $2}' "$LOCK")
-echo "  Tor Browser locked at: $commit"
+# Step 1: Bootstrap (clone upstream Tor Browser if not present)
+echo "[1/5] Bootstrapping upstream Tor Browser..."
+if [[ ! -d "$TB/.git" ]]; then
+  echo "Tor Browser not found at $TB — cloning from $TOR_BROWSER_GIT"
+  mkdir -p "$(dirname "$TB")"
+  if ! git clone "$TOR_BROWSER_GIT" "$TB"; then
+    echo "ERROR: Failed to clone $TOR_BROWSER_GIT"
+    exit 1
+  fi
+
+  # If a specific commit is locked, try to fetch and checkout it
+  if [[ -n "${commit:-}" ]]; then
+    echo "  Checking out locked Tor Browser commit: $commit"
+    # If the commit isn't known locally, attempt to fetch it
+    if ! git -C "$TB" rev-parse --verify "$commit" >/dev/null 2>&1; then
+      echo "  Commit $commit not present locally; fetching from origin..."
+      # try a shallow fetch of the specific commit, fall back to full fetch
+      if ! git -C "$TB" fetch --depth=1 origin "$commit" 2>/dev/null; then
+        git -C "$TB" fetch origin "$commit"
+      fi
+    fi
+    git -C "$TB" checkout "$commit"
+  fi
+else
+  echo "Tor Browser already bootstrapped at $TB"
+fi
+
 echo
 
 # Step 2: Generate icon assets
