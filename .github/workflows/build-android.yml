@@ -24,9 +24,6 @@ jobs:
     name: Android
     runs-on: ubuntu-24.04
     timeout-minutes: 1000
-    defaults:
-      run:
-        working-directory: scripts
     steps:
       - run: ls
       - run: ./build-with-patches.sh
