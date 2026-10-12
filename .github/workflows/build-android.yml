@@ -26,6 +26,6 @@ jobs:
     timeout-minutes: 1000
     defaults:
       run:
-        working-directory: ./scripts
+        working-directory: scripts
     steps:
       - run: ./build-with-patches.sh
