@@ -25,4 +25,4 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 1000
     steps:
-      - run: ./scripts/build-with-patches.sh
+      - run: scripts/build-with-patches.sh
