@@ -40,7 +40,7 @@ jobs:
         with:
           cmdline-tools-version: 12266719
 
-      - name: Install Android packages
+      - name: Install required Android packages
         shell: bash
         run: |
           set -euo pipefail
@@ -62,17 +62,6 @@ jobs:
         run: |
           set -euo pipefail
           bash scripts/build-with-patches.sh
-
-      - name: Locate APK/AAB files
-        if: success()
-        shell: bash
-        run: |
-          set -euo pipefail
-          find . -type f \( -iname "*.apk" -o -iname "*.aab" \) | tee apk-list.txt
-          if [ ! -s apk-list.txt ]; then
-            echo "No APK/AAB files were produced."
-            exit 1
-          fi
 
       - name: Upload APK artifact
         if: success()
