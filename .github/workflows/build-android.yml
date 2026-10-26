@@ -36,22 +36,45 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y openjdk-17-jdk
 
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
-        with:
-          cmdline-tools-version: 12266719
-
-      - name: Install required Android packages
+      - name: Configure Android SDK
         shell: bash
         run: |
           set -euo pipefail
-          export ANDROID_SDK_ROOT="${ANDROID_SDK_ROOT:-$ANDROID_HOME}"
 
-          # Accept Android SDK licenses without failing on the broken-pipe issue.
-          printf 'y\n' | "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" --licenses >/dev/null || true
+          export ANDROID_SDK_ROOT="${ANDROID_SDK_ROOT:-/usr/local/lib/android/sdk}"
+          export ANDROID_HOME="${ANDROID_HOME:-$ANDROID_SDK_ROOT}"
+          export PATH="$ANDROID_HOME/platform-tools:$PATH"
 
-          # Install valid, modern Android package IDs.
-          "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" \
+          if [[ ! -d "$ANDROID_SDK_ROOT" ]]; then
+            echo "Android SDK not found at $ANDROID_SDK_ROOT"
+            exit 1
+          fi
+
+          if [[ -x "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" ]]; then
+            SDKMANAGER="$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager"
+          elif [[ -x "$ANDROID_SDK_ROOT/cmdline-tools/16.0/bin/sdkmanager" ]]; then
+            SDKMANAGER="$ANDROID_SDK_ROOT/cmdline-tools/16.0/bin/sdkmanager"
+          else
+            echo "sdkmanager not found in $ANDROID_SDK_ROOT"
+            echo "Installed SDK layout:"
+            find "$ANDROID_SDK_ROOT" -maxdepth 3 -type f -name sdkmanager 2>/dev/null || true
+            exit 1
+          fi
+
+          echo "SDKMANAGER=$SDKMANAGER" >> "$GITHUB_ENV"
+          echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT" >> "$GITHUB_ENV"
+          echo "ANDROID_HOME=$ANDROID_HOME" >> "$GITHUB_ENV"
+
+      - name: Accept Android SDK licenses and install packages
+        shell: bash
+        run: |
+          set -euo pipefail
+          SDKMANAGER="${SDKMANAGER:-$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager}"
+
+          # Accept licenses without failing on the broken pipe case
+          printf 'y\n' | "$SDKMANAGER" --licenses >/dev/null || true
+
+          "$SDKMANAGER" \
             "platform-tools" \
             "platforms;android-34" \
             "build-tools;34.0.0"
