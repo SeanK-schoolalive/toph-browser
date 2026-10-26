@@ -36,18 +36,21 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y openjdk-17-jdk
 
-      - name: Setup Android SDK
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+        with:
+          cmdline-tools-version: 12266719
+
+      - name: Install required Android packages
         shell: bash
         run: |
           set -euo pipefail
-          export ANDROID_SDK_ROOT=/usr/local/lib/android/sdk
-          export ANDROID_HOME=/usr/local/lib/android/sdk
-          export PATH="$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$PATH"
+          export ANDROID_SDK_ROOT="${ANDROID_SDK_ROOT:-$ANDROID_HOME}"
 
-          # accept licenses non-interactively
-          yes | "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" --licenses >/dev/null
+          # Accept Android SDK licenses without failing on the broken-pipe issue.
+          printf 'y\n' | "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" --licenses >/dev/null || true
 
-          # install valid packages only
+          # Install valid, modern Android package IDs.
           "$ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager" \
             "platform-tools" \
             "platforms;android-34" \
@@ -64,6 +67,17 @@ jobs:
         run: |
           set -euo pipefail
           bash scripts/build-with-patches.sh
+
+      - name: Locate APK/AAB files
+        if: success()
+        shell: bash
+        run: |
+          set -euo pipefail
+          find . -type f \( -iname "*.apk" -o -iname "*.aab" \) | tee apk-list.txt
+          if [ ! -s apk-list.txt ]; then
+            echo "No APK/AAB files were produced."
+            exit 1
+          fi
 
       - name: Upload APK artifact
         if: success()
