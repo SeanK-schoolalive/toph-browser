@@ -25,10 +25,16 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 1000
     steps:
-     - name: Check shell syntax
-          shell: bash
-          run: |
+      - uses: actions/checkout@v4
+
+      - name: Check shell syntax
+        shell: bash
+        run: |
           set -euo pipefail
           bash -n scripts/*.sh
-      - run: ls
-      - run: ./build-with-patches.sh
+
+      - name: List workspace
+        run: ls
+
+      - name: Build with patches
+        run: ./build-with-patches.sh
