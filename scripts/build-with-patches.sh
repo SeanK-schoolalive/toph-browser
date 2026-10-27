@@ -35,24 +35,6 @@ if [[ ! -d "$TB/.git" ]]; then
     echo "ERROR: Failed to clone $TOR_BROWSER_GIT"
     exit 1
   fi
-
-  # If a specific commit is locked, try to fetch and checkout it
-  if [[ -n "${commit:-}" ]]; then
-    echo "  Checking out locked Tor Browser commit: $commit"
-    # If the commit isn't known locally, attempt to fetch it
-    if ! git -C "$TB" rev-parse --verify "$commit" >/dev/null 2>&1; then
-      echo "  Commit $commit not present locally; fetching from origin..."
-      # try a shallow fetch of the specific commit, fall back to full fetch
-      if ! git -C "$TB" fetch --depth=1 origin "$commit" 2>/dev/null; then
-        git -C "$TB" fetch origin "$commit"
-      fi
-    fi
-    git -C "$TB" checkout "$commit"
-  fi
-else
-  echo "Tor Browser already bootstrapped at $TB"
-fi
-
 echo
 
 # Step 2: Generate icon assets
