@@ -35,6 +35,16 @@ if [[ ! -d "$TB/.git" ]]; then
     echo "ERROR: Failed to clone $TOR_BROWSER_GIT"
     exit 1
   fi
+
+  if [[ -n "${commit}" ]]; then
+    echo "Checking out locked Tor Browser commit: $commit"
+    if ! git -C "$TB" checkout "$commit"; then
+      echo "ERROR: Failed to checkout locked Tor Browser commit $commit"
+      exit 1
+    fi
+  fi
+fi
+
 echo
 
 # Step 2: Generate icon assets
