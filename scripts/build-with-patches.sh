@@ -31,16 +31,14 @@ checkout_valid_tor_browser_ref() {
   local pinned_commit="${2:-}"
   local ref
 
-  # Prefer the exact locked SHA when it exists, because the project explicitly declares it.
+  # Prefer the exact locked SHA when it exists.
   if [[ -n "$pinned_commit" ]] && git -C "$repo_dir" rev-parse --verify "${pinned_commit}^{commit}" >/dev/null 2>&1; then
     echo "Checking out locked Tor Browser commit: $pinned_commit"
     git -C "$repo_dir" checkout --detach "$pinned_commit"
     return 0
   fi
 
-  # If the lock is stale or missing, fall back to the nearest known Android-compatible release refs
-  # instead of blindly checking out generic upstream HEAD, which does not always contain the
-  # Android source layout required by this build.
+  # If the lock is stale or missing, try release refs instead of generic HEAD.
   local -a refs=(
     "tor-browser_140.17.0esr-15.0-24"
     "tor-browser_140.17.0esr-15.0"
