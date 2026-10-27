@@ -26,6 +26,43 @@ else
   commit=""
 fi
 
+checkout_valid_tor_browser_ref() {
+  local repo_dir="$1"
+  local pinned_commit="${2:-}"
+  local ref
+
+  # Prefer the exact locked SHA when it exists, because the project explicitly declares it.
+  if [[ -n "$pinned_commit" ]] && git -C "$repo_dir" rev-parse --verify "${pinned_commit}^{commit}" >/dev/null 2>&1; then
+    echo "Checking out locked Tor Browser commit: $pinned_commit"
+    git -C "$repo_dir" checkout --detach "$pinned_commit"
+    return 0
+  fi
+
+  # If the lock is stale or missing, fall back to the nearest known Android-compatible release refs
+  # instead of blindly checking out generic upstream HEAD, which does not always contain the
+  # Android source layout required by this build.
+  local -a refs=(
+    "tor-browser_140.17.0esr-15.0-24"
+    "tor-browser_140.17.0esr-15.0"
+    "tor-browser-15.0.24"
+    "15.0.24"
+    "release-15.0"
+    "release-15.0.24"
+  )
+
+  for ref in "${refs[@]}"; do
+    if git -C "$repo_dir" rev-parse --verify "${ref}^{commit}" >/dev/null 2>&1; then
+      echo "Checking out Tor Browser release ref: $ref"
+      git -C "$repo_dir" checkout --detach "$ref"
+      return 0
+    fi
+  done
+
+  echo "ERROR: No valid Android-compatible Tor Browser release ref was found for this repo."
+  echo "The upstream checkout does not contain the expected Android source tree."
+  return 1
+}
+
 # Step 1: Bootstrap (clone upstream Tor Browser if not present)
 echo "[1/5] Bootstrapping upstream Tor Browser..."
 if [[ ! -d "$TB/.git" ]]; then
@@ -37,21 +74,14 @@ if [[ ! -d "$TB/.git" ]]; then
   fi
 fi
 
-if [[ -n "${commit}" ]]; then
-  echo "Refreshing upstream refs..."
-  git -C "$TB" fetch --all --tags --prune
+if ! checkout_valid_tor_browser_ref "$TB" "$commit"; then
+  exit 1
+fi
 
-  if git -C "$TB" rev-parse --verify "${commit}^{commit}" >/dev/null 2>&1; then
-    echo "Checking out locked Tor Browser commit: $commit"
-    if ! git -C "$TB" checkout --detach "$commit"; then
-      echo "ERROR: Failed to checkout locked Tor Browser commit $commit"
-      exit 1
-    fi
-  else
-    echo "WARN: Locked Tor Browser commit $commit is not available in the upstream repository"
-    echo "WARN: Falling back to the current upstream HEAD so the build can continue."
-    git -C "$TB" checkout --detach HEAD
-  fi
+if [[ ! -d "$TB/mobile/android/app/src/main/res" ]]; then
+  echo "ERROR: Android resources directory not found at $TB/mobile/android/app/src/main/res"
+  echo "Ensure Tor Browser source is checked out at $TB"
+  exit 1
 fi
 
 echo
