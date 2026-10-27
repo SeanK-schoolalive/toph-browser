@@ -35,13 +35,18 @@ if [[ ! -d "$TB/.git" ]]; then
     echo "ERROR: Failed to clone $TOR_BROWSER_GIT"
     exit 1
   fi
+fi
 
-  if [[ -n "${commit}" ]]; then
-    echo "Checking out locked Tor Browser commit: $commit"
-    if ! git -C "$TB" checkout "$commit"; then
-      echo "ERROR: Failed to checkout locked Tor Browser commit $commit"
-      exit 1
-    fi
+if [[ -n "${commit}" ]]; then
+  echo "Refreshing upstream refs and checking out locked Tor Browser commit: $commit"
+  git -C "$TB" fetch --all --tags --prune
+  if ! git -C "$TB" rev-parse --verify "${commit}^{commit}" >/dev/null 2>&1; then
+    echo "ERROR: Locked Tor Browser commit $commit is not available in the upstream repository"
+    exit 1
+  fi
+  if ! git -C "$TB" checkout --detach "$commit"; then
+    echo "ERROR: Failed to checkout locked Tor Browser commit $commit"
+    exit 1
   fi
 fi
 
