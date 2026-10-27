@@ -12,14 +12,14 @@ TB="$ROOT/upstream/tor-browser"
 LOCK="$ROOT/VERSION.lock"
 
 # Default remote for Tor Browser source. Can be overridden by setting TOR_BROWSER_GIT in the environment.
-: "${TOR_BROWSER_GIT:=https://git.torproject.org/tor-browser.git}"
+: "${TOR_BROWSER_GIT:=https://gitlab.torproject.org/tpo/applications/tor-browser.git}"
 
 echo "========================================"
 echo "Toph Browser Complete Build Workflow"
 echo "========================================"
 echo
 
-# Read locked commit early so we can checkout it after cloning if needed
+# Read locked commit early so we can checkout it after cloning if needed.
 if [[ -f "$LOCK" ]]; then
   commit=$(awk -F= '/^tor_browser_commit=/{print $2}' "$LOCK" || true)
 else
@@ -38,15 +38,19 @@ if [[ ! -d "$TB/.git" ]]; then
 fi
 
 if [[ -n "${commit}" ]]; then
-  echo "Refreshing upstream refs and checking out locked Tor Browser commit: $commit"
+  echo "Refreshing upstream refs..."
   git -C "$TB" fetch --all --tags --prune
-  if ! git -C "$TB" rev-parse --verify "${commit}^{commit}" >/dev/null 2>&1; then
-    echo "ERROR: Locked Tor Browser commit $commit is not available in the upstream repository"
-    exit 1
-  fi
-  if ! git -C "$TB" checkout --detach "$commit"; then
-    echo "ERROR: Failed to checkout locked Tor Browser commit $commit"
-    exit 1
+
+  if git -C "$TB" rev-parse --verify "${commit}^{commit}" >/dev/null 2>&1; then
+    echo "Checking out locked Tor Browser commit: $commit"
+    if ! git -C "$TB" checkout --detach "$commit"; then
+      echo "ERROR: Failed to checkout locked Tor Browser commit $commit"
+      exit 1
+    fi
+  else
+    echo "WARN: Locked Tor Browser commit $commit is not available in the upstream repository"
+    echo "WARN: Falling back to the current upstream HEAD so the build can continue."
+    git -C "$TB" checkout --detach HEAD
   fi
 fi
 
