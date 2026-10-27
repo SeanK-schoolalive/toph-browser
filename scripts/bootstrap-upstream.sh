@@ -11,8 +11,16 @@ clone_or_fetch() {
   else
     git clone "$url" "$dir"
   fi
+
   git -C "$dir" fetch --tags --force
-  git -C "$dir" checkout --detach "$rev"
+
+  if git -C "$dir" rev-parse --verify "${rev}^{commit}" >/dev/null 2>&1; then
+    git -C "$dir" checkout --detach "$rev"
+  else
+    echo "WARN: $name revision $rev is not available upstream; falling back to HEAD"
+    git -C "$dir" checkout --detach HEAD
+  fi
+
   echo "$name: $(git -C "$dir" rev-parse HEAD)"
 }
 
